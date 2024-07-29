@@ -1,0 +1,70 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Customer {
+  createdAt   DateTime  @default(now())
+  email       String?
+  id          String    @id @default(cuid())
+  name        String?
+  orders      Order[]
+  phoneNumber String?
+  requests    Request[]
+  updatedAt   DateTime  @updatedAt
+}
+
+model CreditCardHolder {
+  bankAccount    String?
+  createdAt      DateTime  @default(now())
+  creditCardType String?
+  email          String?
+  id             String    @id @default(cuid())
+  name           String?
+  orders         Order[]
+  phoneNumber    String?
+  requests       Request[]
+  updatedAt      DateTime  @updatedAt
+}
+
+model Order {
+  createdAt          DateTime          @default(now())
+  creditCardHolder   CreditCardHolder? @relation(fields: [creditCardHolderId], references: [id])
+  creditCardHolderId String?
+  customer           Customer?         @relation(fields: [customerId], references: [id])
+  customerId         String?
+  id                 String            @id @default(cuid())
+  orderStatus        String?
+  productLink        String?
+  productName        String?
+  totalAmount        Float?
+  updatedAt          DateTime          @updatedAt
+}
+
+model Request {
+  createdAt          DateTime          @default(now())
+  creditCardHolder   CreditCardHolder? @relation(fields: [creditCardHolderId], references: [id])
+  creditCardHolderId String?
+  customer           Customer?         @relation(fields: [customerId], references: [id])
+  customerId         String?
+  discountDetail     String?
+  id                 String            @id @default(cuid())
+  productLink        String?
+  productName        String?
+  status             String?
+  updatedAt          DateTime          @updatedAt
+}
+
+model Offer {
+  applicableCreditCardType String?
+  createdAt                DateTime  @default(now())
+  description              String?
+  discountPercentage       Float?
+  id                       String    @id @default(cuid())
+  updatedAt                DateTime  @updatedAt
+  validUntil               DateTime?
+}
